@@ -33,11 +33,13 @@ def img_show(img):
     pil_img = Image.fromarray(np.uint8(img))
     pil_img.show();
 
+
 x, t = get_data()
 network = init_network()
 
 batch_size = 100
 accuracy_cnt = 0
+
 
 for i in range(0, len(x), batch_size):
     x_batch = x[i:i+batch_size]
