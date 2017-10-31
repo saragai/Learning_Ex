@@ -7,11 +7,15 @@ def identity_function(x):
     return x
 
 
-def softmax(a):
-    c = np.max(a)
-    exp_a = np.exp(a-c) # for overflow
-    sum_exp_a = np.sum(exp_a)
-    return exp_a / sum_exp_a
+def softmax(x):
+    if x.ndim == 2:
+        x = x.T
+        x = x - np.max(x, axis=0)
+        y = np.exp(x) / np.sum(np.exp(x), axis=0)
+        return y.T
+    x = x - np.max(x)
+    return np.exp(x) / np.sum(np.exp(x))
+
 
 def mean_squared_error(y, t):
     return 0.5 * np.sum((y-t)**2)
@@ -33,13 +37,12 @@ def numerical_diff(f, x):
 def numerical_gradient(f, x):
     h = 1e-4
     grad = np.zeros_like(x)
-    
     it = np.nditer(x, flags=['multi_index'], op_flags=['readwrite'])
-
+    
     while not it.finished:
         idx = it.multi_index
         tmp_val = x[idx]
-        x[idx] = float(tmp_val) + h
+        x[idx] = tmp_val + h
         fxh1 = f(x)
 
         x[idx] = tmp_val - h
@@ -47,7 +50,6 @@ def numerical_gradient(f, x):
 
         grad[idx] =(fxh1 - fxh2) / (2 * h)
         x[idx] = tmp_val
-        
         it.iternext()
     return grad
 
